@@ -10,31 +10,33 @@
   </head>
   <body>
     <div class="banners">
-      <div class="active-banner">
+      <!-- this has to be positioned top left 00 -->
+      <div class="stage">
 
       </div>
-      <div class="next-banner">
+
+      <!-- this has to be positioned top left 00 -->
+      <div class="greenroom">
 
       </div>
-      <div class="inactive-banner-queue">
-        <div class="banner">
-          <input type="hidden" bannerId="1" bannerUrl="/scott/1.jpg" subtitle="Estamos de aniversario">
-          <input type="hidden" bannerId="2" bannerUrl="/scott/2.jpg" subtitle="Something about airborne">
-          <input type="hidden" bannerId="3" bannerUrl="/scott/3.jpg" subtitle="This is the third subtitle">
-        </div>
+
+      <div class="banner-list">
+        <input type="hidden" bannerId="1" bannerUrl="/scott/1.jpg" subtitle="Estamos de aniversario">
+        <input type="hidden" bannerId="2" bannerUrl="/scott/2.jpg" subtitle="Something about airborne">
+        <input type="hidden" bannerId="3" bannerUrl="/scott/3.jpg" subtitle="This is the third subtitle">
       </div>
       <div class="control-bar">
         <div class="subtitle">
 
         </div>
         <div class="controls">
-          <span class="previous"></span>
-          <span class="next"></span>
+          <span class="prev">prev</span>
+          <span class="next">next</span>
         </div>
       </div>
     </div>
     <script type="text/javascript" src="http://www.scottcolombia.com/js/jquery-1.4.2.min.js"></script>
-    <script src="js/banners.js"></script>
+    <script src="/scott/js/banners.js"></script>
   </body>
 </html>
 
