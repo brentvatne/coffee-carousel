@@ -1,33 +1,104 @@
 # Features remaining:
-# - Fade out
-# - Loading before and after image after first is loaded
 # - Timer for automatically rotating
 # - Pause button
+# - Loading before and after image after first is loaded
 # - Option to switch to particular slide?
+#
+# Done:
+# - Fade out
+  #
+  # var fadeTimeOut;
+  # function setFadeoutTimer() {
+  #   fadeTimeOut = setTimeout(function() {
+  #     var $next = $(".punto.sel").next();
+  #     if ($next.length == 0) {
+  #       $next = $(".punto").first();
+  #     }
+  #     $next.trigger("click");
+  #     setFadeoutTimer();
+  #   }, 8000);
+  # }
+  # setFadeoutTimer();
 
 $ ->
+  class ImagePreloader
+    constructor: (images, container) ->
+
+  class AutomaticScroller
+    constructor: (@scroller, @wait) ->
+      @create()
+
+    delay: (callback) ->
+      setTimeout callback, @wait
+
+    create: ()->
+      @timer = @delay(=>
+        @scroller.next()
+        @create()
+      )
+      this
+
+    destroy: ->
+      clearTimeout(@timer)
+      this
+
   class BannerScroller
     # Accepts a container that is a jQuery object containing all required components
-    constructor: (container) ->
-      @next_button = container.find(".controls .next")
-      @prev_button = container.find(".controls .prev")
-      @stage       = container.find(".stage")
-      @greenroom   = container.find(".greenroom")
-      @subtitle    = container.find(".subtitle")
-      @banners     = @make_banner_list container.find(".banner-list input")
-
+    constructor: (@container) ->
+      @initialize_dom_objects()
       @initialize_callbacks()
-      @current_banner_id = 0
-      @show_banner(@current_banner_id)
+      @get_banner_data()
+      @show_banner 0
+      @create_timer()
+
+    next: ->
+      @show_banner @next_banner()
+
+    prev: ->
+      @show_banner @prev_banner()
+
+    create_timer: ->
+      @timer = new AutomaticScroller this, 2000
+
+    restart_timer: ->
+      @timer.destroy().create()
+
+    show_banner: (id) ->
+      @hide_old_banner()
+      @show_new_banner(id)
+      @active_banner = id
+
+    # moves staged image to backstage and begins to fade it out
+    hide_old_banner: () ->
+      @backstage.empty()
+      @stage.find("a").appendTo(@backstage).fadeOut()
+
+    # adds new image to stage and begins to fade it in
+    show_new_banner: (id) ->
+      @draw_html_banner(@banners[id].image, @banners[id].link).hide().fadeIn()
+      @draw_html_subtitle(@banners[id].subtitle)
+
+    #initialization methods
+    initialize_dom_objects: ->
+      @next_button   = @container.find(".controls .next")
+      @prev_button   = @container.find(".controls .prev")
+      @stage         = @container.find(".stage")
+      @backstage     = @container.find(".backstage")
+      @subtitle      = @container.find(".subtitle")
 
     initialize_callbacks: ->
-      scroller = @
-      @next_button.click ->
-        scroller.next()
+      @next_button.click =>
+        @timer.destroy()
+        @next()
 
-      @prev_button.click ->
-        scroller.prev()
+      @prev_button.click =>
+        @timer.destroy()
+        @prev()
 
+    get_banner_data: ->
+      @banners = @make_banner_list @container.find(".banner-list input")
+
+    #lower-level utility methods
     make_banner_list: (elements) ->
       elements = ($ el for el in elements)
       list = []
@@ -39,42 +110,30 @@ $ ->
         list.push(data)
       list
 
-    next: ->
-      @show_banner @get_next_banner()
-
-    prev: ->
-      @show_banner @get_previous_banner()
-
-    show_banner: (id) ->
-      @fade_out_old_banner()
-      @fade_in_new_banner(id)
-
-      @current_banner_id = id
-
-    fade_out_old_banner: () ->
-      #move to greenroom
-
-    fade_in_new_banner: (id) ->
-      link     = @banners[id].link
-      @draw_html_banner(@banners[id].image, @banners[id].subtitle)
-      @draw_html_subtitle(@banners[id].subtitle)
-      @current_banner = id
-
     draw_html_banner: (image, link) ->
       @stage.html("<a>").find("a").attr("href", link)
       @stage.find("a").html("<img>").find("img").attr("src", image)
+      @stage.find("a")
 
     draw_html_subtitle: (subtitle) ->
       @subtitle.html(subtitle)
 
-    get_previous_banner: ->
-      @current_banner_id -= 1
-      @current_banner_id = @banners.length - 1 if @current_banner_id < 0
-      @current_banner_id
+    prev_banner: ->
+      if @first_banner_is_active() then @last_banner() else @active_banner - 1
 
-    get_next_banner: ->
-      @current_banner_id += 1
-      @current_banner_id = 0 if @current_banner_id >= @banners.length
-      @current_banner_id
+    next_banner: ->
+      if @last_banner_is_active() then @first_banner() else @active_banner + 1
+
+    last_banner_is_active: ->
+      @active_banner == @last_banner()
+
+    first_banner_is_active: ->
+      @active_banner == 0
+
+    first_banner: () ->
+      0
+
+    last_banner: () ->
+      @banners.length - 1
 
   scroller = new BannerScroller($(".banners"))
