@@ -1,13 +1,6 @@
 
   $(function() {
-    var AutomaticScroller, BannerScroller, ImagePreloader, scroller;
-    ImagePreloader = (function() {
-
-      function ImagePreloader(images, container) {}
-
-      return ImagePreloader;
-
-    })();
+    var AutomaticScroller, BannerScroller, scroller;
     AutomaticScroller = (function() {
 
       function AutomaticScroller(scroller, wait) {
@@ -31,7 +24,12 @@
 
       AutomaticScroller.prototype.destroy = function() {
         clearTimeout(this.timer);
+        this.timer = null;
         return this;
+      };
+
+      AutomaticScroller.prototype.running = function() {
+        return this.timer;
       };
 
       return AutomaticScroller;
@@ -41,11 +39,12 @@
 
       function BannerScroller(container) {
         this.container = container;
-        this.initialize_dom_objects();
-        this.initialize_callbacks();
-        this.get_banner_data();
+        this.init_dom_objects();
+        this.init_callbacks();
+        this.init_banner_data();
         this.show_banner(0);
-        this.start_automatic_scrolling();
+        this.preload_next_image();
+        this.init_automatic_scrolling();
       }
 
       BannerScroller.prototype.next = function() {
@@ -56,23 +55,51 @@
         return this.show_banner(this.prev_banner());
       };
 
+      BannerScroller.prototype.preload_next_image = function() {
+        var next_image;
+        if (!(this.preloaded_images != null)) {
+          this.preloaded_images = [this.active_banner()];
+        }
+        if (this.preloaded_images.length < this.banners.length) {
+          next_image = this.banners[this.next_banner()];
+          this.html_banner(next_image.image).appendTo(this.backstage);
+          return this.preloaded_images.push(next_image);
+        }
+      };
+
+      BannerScroller.prototype.active_banner = function() {
+        return this.banners[this.active_banner_id];
+      };
+
       BannerScroller.prototype.show_banner = function(id) {
+        this.active_banner_id = id;
         this.hide_old_banner();
-        this.show_new_banner(id);
-        return this.active_banner = id;
+        return this.show_new_banner();
       };
 
       BannerScroller.prototype.hide_old_banner = function() {
+        var old_banner;
+        var _this = this;
         this.backstage.empty();
-        return this.stage.find("a").appendTo(this.backstage).fadeOut();
+        old_banner = this.stage.find("a");
+        old_banner.appendTo(this.backstage);
+        old_banner.fadeOut(function() {
+          return _this.preload_next_image();
+        });
+        this.stage.empty();
+        return this.subtitle.empty();
       };
 
-      BannerScroller.prototype.show_new_banner = function(id) {
-        this.draw_html_banner(this.banners[id].image, this.banners[id].link).hide().fadeIn();
-        return this.draw_html_subtitle(this.banners[id].subtitle);
+      BannerScroller.prototype.show_new_banner = function() {
+        var image, link, subtitle;
+        image = this.active_banner().image;
+        link = this.active_banner().link;
+        subtitle = this.active_banner().subtitle;
+        this.html_banner(image, link).appendTo(this.stage).hide().fadeIn();
+        return this.html_subtitle(subtitle).appendTo(this.subtitle);
       };
 
-      BannerScroller.prototype.initialize_dom_objects = function() {
+      BannerScroller.prototype.init_dom_objects = function() {
         this.next_button = this.container.find(".controls .next");
         this.prev_button = this.container.find(".controls .prev");
         this.play_button = this.container.find(".controls .play");
@@ -82,7 +109,7 @@
         return this.subtitle = this.container.find(".subtitle");
       };
 
-      BannerScroller.prototype.initialize_callbacks = function() {
+      BannerScroller.prototype.init_callbacks = function() {
         var _this = this;
         this.next_button.click(function() {
           _this.stop_automatic_scrolling();
@@ -100,19 +127,34 @@
         });
       };
 
-      BannerScroller.prototype.get_banner_data = function() {
+      BannerScroller.prototype.toggle_play_button = function() {
+        if (this.play_button.hasClass("hidden")) {
+          this.play_button.removeClass("hidden");
+          return this.pause_button.addClass("hidden");
+        } else {
+          this.play_button.addClass("hidden");
+          return this.pause_button.removeClass("hidden");
+        }
+      };
+
+      BannerScroller.prototype.init_banner_data = function() {
         return this.banners = this.make_banner_list(this.container.find(".banner-list input"));
       };
 
-      BannerScroller.prototype.start_automatic_scrolling = function() {
+      BannerScroller.prototype.init_automatic_scrolling = function() {
+        this.toggle_play_button();
         return this.timer = new AutomaticScroller(this, 2000);
       };
 
       BannerScroller.prototype.stop_automatic_scrolling = function() {
-        return this.timer.destroy();
+        if (this.timer.running()) {
+          this.toggle_play_button();
+          return this.timer.destroy();
+        }
       };
 
       BannerScroller.prototype.restart_automatic_scrolling = function() {
+        this.toggle_play_button();
         return this.timer.destroy().create();
       };
 
@@ -140,21 +182,26 @@
         return list;
       };
 
-      BannerScroller.prototype.draw_html_banner = function(image, link) {
-        this.stage.html("<a>").find("a").attr("href", link);
-        this.stage.find("a").html("<img>").find("img").attr("src", image);
-        return this.stage.find("a");
+      BannerScroller.prototype.html_banner = function(image, link) {
+        var banner;
+        if (link == null) link = "";
+        banner = $('<a/>', {
+          href: link
+        });
+        return banner.html($('<img/>', {
+          src: image
+        }));
       };
 
-      BannerScroller.prototype.draw_html_subtitle = function(subtitle) {
-        return this.subtitle.html(subtitle);
+      BannerScroller.prototype.html_subtitle = function(subtitle) {
+        return $("<span>" + subtitle + "</span>");
       };
 
       BannerScroller.prototype.prev_banner = function() {
         if (this.first_banner_is_active()) {
           return this.last_banner();
         } else {
-          return this.active_banner - 1;
+          return this.active_banner_id - 1;
         }
       };
 
@@ -162,16 +209,16 @@
         if (this.last_banner_is_active()) {
           return this.first_banner();
         } else {
-          return this.active_banner + 1;
+          return this.active_banner_id + 1;
         }
       };
 
       BannerScroller.prototype.last_banner_is_active = function() {
-        return this.active_banner === this.last_banner();
+        return this.active_banner_id === this.last_banner();
       };
 
       BannerScroller.prototype.first_banner_is_active = function() {
-        return this.active_banner === 0;
+        return this.active_banner_id === 0;
       };
 
       BannerScroller.prototype.first_banner = function() {

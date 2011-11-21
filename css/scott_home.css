@@ -1,7 +1,3 @@
-/* Welcome to Compass.
- * In this file you should write your main styles. (or centralize your imports)
- * Import this file using the following HTML or equivalent:
- * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -58,10 +54,21 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   display: block;
 }
 
-.banners .scroll-container {
+/*         Variables             */
+/*         Funciones             */
+.icons-sprite, .banners .controls .pause, .banners .controls .play, .banners .controls .prev, .banners .controls .next {
+  background: url('http://localhost:4444/scott/images/icons-s4f45944365.png') no-repeat;
+}
+
+/* import icons */
+/* import icons */
+.banners {
   position: relative;
   height: 556px;
   width: 990px;
+}
+.banners .scroll-container {
+  position: relative;
 }
 .banners .stage, .banners .backstage {
   position: absolute;
@@ -70,4 +77,73 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 .banners .stage {
   z-index: 1000;
+}
+.banners .backstage {
+  z-index: 990;
+}
+.banners .toolbar-base, .banners .toolbar-background, .banners .toolbar {
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+}
+.banners .toolbar-background {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+  opacity: 0.7;
+  z-index: 1009;
+  background: #000;
+}
+.banners .toolbar {
+  z-index: 1010;
+  color: white;
+}
+.banners .controls {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.banners .controls .control, .banners .controls .pause, .banners .controls .play, .banners .controls .prev, .banners .controls .next {
+  display: inline-block;
+  /* For normal, healthy browsers */
+  text-indent: -119988px;
+  overflow: hidden;
+  text-align: left;
+}
+* html .banners .controls .control, * html .banners .controls .pause, * html .banners .controls .play, * html .banners .controls .prev, * html .banners .controls .next {
+  /* for IE6 */
+  display: inline;
+}
+* + html .banners .controls .control, * + html .banners .controls .pause, * + html .banners .controls .play, * + html .banners .controls .prev, * + html .banners .controls .next {
+  /* for IE7 */
+  display: inline;
+}
+.banners .controls .control:hover, .banners .controls .pause:hover, .banners .controls .play:hover, .banners .controls .prev:hover, .banners .controls .next:hover {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+  opacity: 0.8;
+  cursor: pointer;
+  cursor: hand;
+}
+.banners .controls .pause {
+  background-position: 0 -21px;
+  height: 21px;
+  width: 27px;
+}
+.banners .controls .play {
+  background-position: 0 -42px;
+  height: 21px;
+  width: 27px;
+}
+.banners .controls .prev {
+  background-position: 0 -63px;
+  height: 21px;
+  width: 27px;
+}
+.banners .controls .next {
+  background-position: 0 0;
+  height: 21px;
+  width: 27px;
+}
+.banners .controls .hidden {
+  display: none !important;
 }
