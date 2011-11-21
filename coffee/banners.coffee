@@ -5,20 +5,7 @@
 # Done:
 # - Fade out
 # - Timer for automatically rotating
-# - Pause button (this is possible)
-  #
-  # var fadeTimeOut;
-  # function setFadeoutTimer() {
-  #   fadeTimeOut = setTimeout(function() {
-  #     var $next = $(".punto.sel").next();
-  #     if ($next.length == 0) {
-  #       $next = $(".punto").first();
-  #     }
-  #     $next.trigger("click");
-  #     setFadeoutTimer();
-  #   }, 8000);
-  # }
-  # setFadeoutTimer();
+# - Pause button
 
 $ ->
   class ImagePreloader
@@ -57,15 +44,6 @@ $ ->
     prev: ->
       @show_banner @prev_banner()
 
-    start_automatic_scrolling: ->
-      @timer = new AutomaticScroller this, 2000
-
-    stop_automatic_scrolling: ->
-      @timer.destroy()
-
-    restart_automatic_scrolling: ->
-      @timer.destroy().create()
-
     show_banner: (id) ->
       @hide_old_banner()
       @show_new_banner(id)
@@ -85,6 +63,8 @@ $ ->
     initialize_dom_objects: ->
       @next_button   = @container.find(".controls .next")
       @prev_button   = @container.find(".controls .prev")
+      @play_button   = @container.find(".controls .play")
+      @pause_button  = @container.find(".controls .pause")
       @stage         = @container.find(".stage")
       @backstage     = @container.find(".backstage")
       @subtitle      = @container.find(".subtitle")
@@ -98,8 +78,24 @@ $ ->
         @stop_automatic_scrolling()
         @prev()
 
+      @pause_button.click =>
+        @stop_automatic_scrolling()
+
+      @play_button.click =>
+        @restart_automatic_scrolling()
+
     get_banner_data: ->
       @banners = @make_banner_list @container.find(".banner-list input")
+
+    start_automatic_scrolling: ->
+      @timer = new AutomaticScroller this, 2000
+
+    stop_automatic_scrolling: ->
+      @timer.destroy()
+
+    restart_automatic_scrolling: ->
+      @timer.destroy().create()
+
 
     #lower-level utility methods
     make_banner_list: (elements) ->

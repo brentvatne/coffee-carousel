@@ -57,3 +57,17 @@ a img {
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
+
+.banners .scroll-container {
+  position: relative;
+  height: 556px;
+  width: 990px;
+}
+.banners .stage, .banners .backstage {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+.banners .stage {
+  z-index: 1000;
+}

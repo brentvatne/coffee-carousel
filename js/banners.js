@@ -45,7 +45,7 @@
         this.initialize_callbacks();
         this.get_banner_data();
         this.show_banner(0);
-        this.create_timer();
+        this.start_automatic_scrolling();
       }
 
       BannerScroller.prototype.next = function() {
@@ -54,14 +54,6 @@
 
       BannerScroller.prototype.prev = function() {
         return this.show_banner(this.prev_banner());
-      };
-
-      BannerScroller.prototype.create_timer = function() {
-        return this.timer = new AutomaticScroller(this, 2000);
-      };
-
-      BannerScroller.prototype.restart_timer = function() {
-        return this.timer.destroy().create();
       };
 
       BannerScroller.prototype.show_banner = function(id) {
@@ -83,6 +75,8 @@
       BannerScroller.prototype.initialize_dom_objects = function() {
         this.next_button = this.container.find(".controls .next");
         this.prev_button = this.container.find(".controls .prev");
+        this.play_button = this.container.find(".controls .play");
+        this.pause_button = this.container.find(".controls .pause");
         this.stage = this.container.find(".stage");
         this.backstage = this.container.find(".backstage");
         return this.subtitle = this.container.find(".subtitle");
@@ -91,17 +85,35 @@
       BannerScroller.prototype.initialize_callbacks = function() {
         var _this = this;
         this.next_button.click(function() {
-          _this.timer.destroy();
+          _this.stop_automatic_scrolling();
           return _this.next();
         });
-        return this.prev_button.click(function() {
-          _this.timer.destroy();
+        this.prev_button.click(function() {
+          _this.stop_automatic_scrolling();
           return _this.prev();
+        });
+        this.pause_button.click(function() {
+          return _this.stop_automatic_scrolling();
+        });
+        return this.play_button.click(function() {
+          return _this.restart_automatic_scrolling();
         });
       };
 
       BannerScroller.prototype.get_banner_data = function() {
         return this.banners = this.make_banner_list(this.container.find(".banner-list input"));
+      };
+
+      BannerScroller.prototype.start_automatic_scrolling = function() {
+        return this.timer = new AutomaticScroller(this, 2000);
+      };
+
+      BannerScroller.prototype.stop_automatic_scrolling = function() {
+        return this.timer.destroy();
+      };
+
+      BannerScroller.prototype.restart_automatic_scrolling = function() {
+        return this.timer.destroy().create();
       };
 
       BannerScroller.prototype.make_banner_list = function(elements) {
