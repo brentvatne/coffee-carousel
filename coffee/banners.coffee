@@ -1,11 +1,11 @@
 # Features remaining:
-# - Timer for automatically rotating
-# - Pause button
 # - Loading before and after image after first is loaded
 # - Option to switch to particular slide?
 #
 # Done:
 # - Fade out
+# - Timer for automatically rotating
+# - Pause button (this is possible)
   #
   # var fadeTimeOut;
   # function setFadeoutTimer() {
@@ -49,7 +49,7 @@ $ ->
       @initialize_callbacks()
       @get_banner_data()
       @show_banner 0
-      @create_timer()
+      @start_automatic_scrolling()
 
     next: ->
       @show_banner @next_banner()
@@ -57,10 +57,13 @@ $ ->
     prev: ->
       @show_banner @prev_banner()
 
-    create_timer: ->
+    start_automatic_scrolling: ->
       @timer = new AutomaticScroller this, 2000
 
-    restart_timer: ->
+    stop_automatic_scrolling: ->
+      @timer.destroy()
+
+    restart_automatic_scrolling: ->
       @timer.destroy().create()
 
     show_banner: (id) ->
@@ -88,11 +91,11 @@ $ ->
 
     initialize_callbacks: ->
       @next_button.click =>
-        @timer.destroy()
+        @stop_automatic_scrolling()
         @next()
 
       @prev_button.click =>
-        @timer.destroy()
+        @stop_automatic_scrolling()
         @prev()
 
     get_banner_data: ->
