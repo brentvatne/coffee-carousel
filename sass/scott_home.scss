@@ -3,6 +3,7 @@
 @import "partials/icons";
 
 .banners {
+	font-family: Helvetica, Arial, sans-serif;
 	position: relative;
 	$stage-z-index: 1000;
 	$backstage-z-index: $stage-z-index - 10;
@@ -42,45 +43,54 @@
 	.toolbar {
 		@extend .toolbar-base;
 		z-index: $toolbar-z-index;
-		color: white;
-	}
-
-	.controls {
-		position: absolute;
-		right: 5px;
-		top: 5px;
-		.control {
-			@include cross-browser-inline-block;
-			@include hide-text;
-			&:hover {
+		color: #eee;
+		.subtitle {
+			font-size: 14px;
+			line-height: 30px;
+			padding-left: 10px;
+			vertical-align: middle;
+			span {
 				@include opacity(0.8);
-				cursor: pointer;
-				cursor: hand;
 			}
 		}
-		.pause {
-			@extend .control;
-			@include icons-sprite(pause);
-			@include icons-sprite-dimensions(pause);
-		}
-		.play {
-			@extend .control;
-			@include icons-sprite(play);
-			@include icons-sprite-dimensions(play);
-		}
-		.prev {
-			@extend .control;
-			@include icons-sprite(prev);
-			@include icons-sprite-dimensions(prev);
-		}
-		.next {
-			@extend .control;
-			@include icons-sprite(next);
-			@include icons-sprite-dimensions(next);
-		}
-		.hidden {
-			display: none !important;
+		.controls {
+			position: absolute;
+			right: 5px;
+			top: 5px;
+			.control {
+				@include cross-browser-inline-block;
+				@include hide-text;
+				&:hover {
+					@include opacity(0.8);
+					cursor: pointer;
+					cursor: hand;
+				}
+			}
+			.pause {
+				@extend .control;
+				@include icons-sprite(pause);
+				@include icons-sprite-dimensions(pause);
+			}
+			.play {
+				@extend .control;
+				@include icons-sprite(play);
+				@include icons-sprite-dimensions(play);
+			}
+			.prev {
+				@extend .control;
+				@include icons-sprite(prev);
+				@include icons-sprite-dimensions(prev);
+			}
+			.next {
+				@extend .control;
+				@include icons-sprite(next);
+				@include icons-sprite-dimensions(next);
+			}
+			.hidden {
+				display: none !important;
+			}
 		}
 	}
+
 
 }

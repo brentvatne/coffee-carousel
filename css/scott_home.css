@@ -56,13 +56,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 /*         Variables             */
 /*         Funciones             */
-.icons-sprite, .banners .controls .pause, .banners .controls .play, .banners .controls .prev, .banners .controls .next {
+.icons-sprite, .banners .toolbar .controls .pause, .banners .toolbar .controls .play, .banners .toolbar .controls .prev, .banners .toolbar .controls .next {
   background: url('http://localhost:4444/scott/images/icons-s4f45944365.png') no-repeat;
 }
 
 /* import icons */
 /* import icons */
 .banners {
+  font-family: Helvetica, Arial, sans-serif;
   position: relative;
   height: 556px;
   width: 990px;
@@ -96,54 +97,64 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 .banners .toolbar {
   z-index: 1010;
-  color: white;
+  color: #eee;
 }
-.banners .controls {
+.banners .toolbar .subtitle {
+  font-size: 14px;
+  line-height: 30px;
+  padding-left: 10px;
+  vertical-align: middle;
+}
+.banners .toolbar .subtitle span {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+  opacity: 0.8;
+}
+.banners .toolbar .controls {
   position: absolute;
   right: 5px;
   top: 5px;
 }
-.banners .controls .control, .banners .controls .pause, .banners .controls .play, .banners .controls .prev, .banners .controls .next {
+.banners .toolbar .controls .control, .banners .toolbar .controls .pause, .banners .toolbar .controls .play, .banners .toolbar .controls .prev, .banners .toolbar .controls .next {
   display: inline-block;
   /* For normal, healthy browsers */
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
 }
-* html .banners .controls .control, * html .banners .controls .pause, * html .banners .controls .play, * html .banners .controls .prev, * html .banners .controls .next {
+* html .banners .toolbar .controls .control, * html .banners .toolbar .controls .pause, * html .banners .toolbar .controls .play, * html .banners .toolbar .controls .prev, * html .banners .toolbar .controls .next {
   /* for IE6 */
   display: inline;
 }
-* + html .banners .controls .control, * + html .banners .controls .pause, * + html .banners .controls .play, * + html .banners .controls .prev, * + html .banners .controls .next {
+* + html .banners .toolbar .controls .control, * + html .banners .toolbar .controls .pause, * + html .banners .toolbar .controls .play, * + html .banners .toolbar .controls .prev, * + html .banners .toolbar .controls .next {
   /* for IE7 */
   display: inline;
 }
-.banners .controls .control:hover, .banners .controls .pause:hover, .banners .controls .play:hover, .banners .controls .prev:hover, .banners .controls .next:hover {
+.banners .toolbar .controls .control:hover, .banners .toolbar .controls .pause:hover, .banners .toolbar .controls .play:hover, .banners .toolbar .controls .prev:hover, .banners .toolbar .controls .next:hover {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   opacity: 0.8;
   cursor: pointer;
   cursor: hand;
 }
-.banners .controls .pause {
+.banners .toolbar .controls .pause {
   background-position: 0 -21px;
   height: 21px;
   width: 27px;
 }
-.banners .controls .play {
+.banners .toolbar .controls .play {
   background-position: 0 -42px;
   height: 21px;
   width: 27px;
 }
-.banners .controls .prev {
+.banners .toolbar .controls .prev {
   background-position: 0 -63px;
   height: 21px;
   width: 27px;
 }
-.banners .controls .next {
+.banners .toolbar .controls .next {
   background-position: 0 0;
   height: 21px;
   width: 27px;
 }
-.banners .controls .hidden {
+.banners .toolbar .controls .hidden {
   display: none !important;
 }

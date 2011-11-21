@@ -143,7 +143,7 @@
 
       BannerScroller.prototype.init_automatic_scrolling = function() {
         this.toggle_play_button();
-        return this.timer = new AutomaticScroller(this, 2000);
+        return this.timer = new AutomaticScroller(this, 6000);
       };
 
       BannerScroller.prototype.stop_automatic_scrolling = function() {

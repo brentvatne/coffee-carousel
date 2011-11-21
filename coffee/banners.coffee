@@ -1,6 +1,3 @@
-# Features remaining:
-# - Loading before and after image after first is loaded
-
 $ ->
   class AutomaticScroller
     constructor: (@scroller, @wait) ->
@@ -114,7 +111,7 @@ $ ->
     #automatic scrolling helpers
     init_automatic_scrolling: ->
       @toggle_play_button()
-      @timer = new AutomaticScroller this, 2000
+      @timer = new AutomaticScroller this, 6000
 
     stop_automatic_scrolling: ->
       if @timer.running()
