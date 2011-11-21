@@ -1,3 +1,10 @@
+# Features remaining:
+# - Fade out
+# - Loading before and after image after first is loaded
+# - Timer for automatically rotating
+# - Pause button
+# - Option to switch to particular slide?
+
 $ ->
   class BannerScroller
     # Accepts a container that is a jQuery object containing all required components
@@ -48,11 +55,9 @@ $ ->
       #move to greenroom
 
     fade_in_new_banner: (id) ->
-      image    = @banners[id].image
-      subtitle = @banners[id].subtitle
       link     = @banners[id].link
-      @draw_html_banner(image, link)
-      @draw_html_subtitle(subtitle)
+      @draw_html_banner(@banners[id].image, @banners[id].subtitle)
+      @draw_html_subtitle(@banners[id].subtitle)
       @current_banner = id
 
     draw_html_banner: (image, link) ->
