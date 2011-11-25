@@ -57,7 +57,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 /*         Variables             */
 /*         Funciones             */
 .icons-sprite, .banners .toolbar .controls .pause, .banners .toolbar .controls .play, .banners .toolbar .controls .prev, .banners .toolbar .controls .next {
-  background: url('http://localhost:4444/scott/images/icons-s4f45944365.png') no-repeat;
+  background: url('../images/icons-s4f45944365.png') no-repeat;
 }
 
 /* import icons */

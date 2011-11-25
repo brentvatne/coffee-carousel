@@ -42,6 +42,7 @@ $ ->
 
       if @preloaded_images.length < @banners.length
         next_image = @banners[@next_banner()]
+        @backstage.empty()
         @html_banner(next_image.image).appendTo(@backstage)
         @preloaded_images.push next_image
 
@@ -57,9 +58,7 @@ $ ->
     # also removes the subtitle
     hide_old_banner: () ->
       @backstage.empty()
-      old_banner = @stage.find("a")
-      old_banner.appendTo(@backstage)
-      old_banner.fadeOut(=> @preload_next_image())
+      @stage.find("a").appendTo(@backstage).fadeOut(=> @preload_next_image())
       @stage.empty()
       @subtitle.empty()
 
@@ -67,20 +66,28 @@ $ ->
     show_new_banner: () ->
       image    = @active_banner().image
       link     = @active_banner().link
+      alt      = @active_banner().alt
       subtitle = @active_banner().subtitle
 
-      @html_banner(image, link).appendTo(@stage).hide().fadeIn()
+      @html_banner(image, alt, link).appendTo(@stage).hide().fadeIn()
       @html_subtitle(subtitle).appendTo(@subtitle)
 
     #initialization methods
     init_dom_objects: ->
-      @next_button   = @container.find(".controls .next")
-      @prev_button   = @container.find(".controls .prev")
-      @play_button   = @container.find(".controls .play")
-      @pause_button  = @container.find(".controls .pause")
+      @next_button   = @wrap_in_null_link @container.find(".controls .next")
+      @prev_button   = @wrap_in_null_link @container.find(".controls .prev")
+      @play_button   = @wrap_in_null_link @container.find(".controls .play")
+      @pause_button  = @wrap_in_null_link @container.find(".controls .pause")
       @stage         = @container.find(".stage")
       @backstage     = @container.find(".backstage")
       @subtitle      = @container.find(".subtitle")
+
+    # Internal: Wraps the given jQuery element in a link that does nothing
+    # in order to prevent the browser from trying to select the elements when
+    # clicked multiple times
+    wrap_in_null_link: ($el)->
+      $el.wrap('<a />').click (e) ->
+        e.preventDefault()
 
     init_callbacks: ->
       @next_button.click =>
@@ -131,13 +138,14 @@ $ ->
           image:    el.attr "imgurl"
           subtitle: el.attr "subtitle"
           link:     el.attr "link"
+          alt:      el.attr "alt"
         list.push(data)
       list
 
     #creates and returns a new anchor element containing the banner image
-    html_banner: (image, link = "") ->
+    html_banner: (image, alt = "", link = "") ->
       banner = $('<a/>', href: link)
-      banner.html($('<img/>', src: image))
+      banner.html($('<img/>', src: image, alt: alt))
 
     html_subtitle: (subtitle) ->
       $("<span>#{subtitle}</span>")

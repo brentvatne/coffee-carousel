@@ -62,6 +62,7 @@
         }
         if (this.preloaded_images.length < this.banners.length) {
           next_image = this.banners[this.next_banner()];
+          this.backstage.empty();
           this.html_banner(next_image.image).appendTo(this.backstage);
           return this.preloaded_images.push(next_image);
         }
@@ -78,12 +79,9 @@
       };
 
       BannerScroller.prototype.hide_old_banner = function() {
-        var old_banner;
         var _this = this;
         this.backstage.empty();
-        old_banner = this.stage.find("a");
-        old_banner.appendTo(this.backstage);
-        old_banner.fadeOut(function() {
+        this.stage.find("a").appendTo(this.backstage).fadeOut(function() {
           return _this.preload_next_image();
         });
         this.stage.empty();
@@ -91,22 +89,29 @@
       };
 
       BannerScroller.prototype.show_new_banner = function() {
-        var image, link, subtitle;
+        var alt, image, link, subtitle;
         image = this.active_banner().image;
         link = this.active_banner().link;
+        alt = this.active_banner().alt;
         subtitle = this.active_banner().subtitle;
-        this.html_banner(image, link).appendTo(this.stage).hide().fadeIn();
+        this.html_banner(image, alt, link).appendTo(this.stage).hide().fadeIn();
         return this.html_subtitle(subtitle).appendTo(this.subtitle);
       };
 
       BannerScroller.prototype.init_dom_objects = function() {
-        this.next_button = this.container.find(".controls .next");
-        this.prev_button = this.container.find(".controls .prev");
-        this.play_button = this.container.find(".controls .play");
-        this.pause_button = this.container.find(".controls .pause");
+        this.next_button = this.wrap_in_null_link(this.container.find(".controls .next"));
+        this.prev_button = this.wrap_in_null_link(this.container.find(".controls .prev"));
+        this.play_button = this.wrap_in_null_link(this.container.find(".controls .play"));
+        this.pause_button = this.wrap_in_null_link(this.container.find(".controls .pause"));
         this.stage = this.container.find(".stage");
         this.backstage = this.container.find(".backstage");
         return this.subtitle = this.container.find(".subtitle");
+      };
+
+      BannerScroller.prototype.wrap_in_null_link = function($el) {
+        return $el.wrap('<a />').click(function(e) {
+          return e.preventDefault();
+        });
       };
 
       BannerScroller.prototype.init_callbacks = function() {
@@ -175,21 +180,24 @@
           data = {
             image: el.attr("imgurl"),
             subtitle: el.attr("subtitle"),
-            link: el.attr("link")
+            link: el.attr("link"),
+            alt: el.attr("alt")
           };
           list.push(data);
         }
         return list;
       };
 
-      BannerScroller.prototype.html_banner = function(image, link) {
+      BannerScroller.prototype.html_banner = function(image, alt, link) {
         var banner;
+        if (alt == null) alt = "";
         if (link == null) link = "";
         banner = $('<a/>', {
           href: link
         });
         return banner.html($('<img/>', {
-          src: image
+          src: image,
+          alt: alt
         }));
       };
 
