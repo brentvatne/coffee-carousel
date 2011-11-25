@@ -113,7 +113,7 @@ $ ->
         @pause_button.removeClass "hidden"
 
     init_banner_data: ->
-      @banners = @make_banner_list @container.find(".banner-list input")
+      @banners = @make_banner_list @container.find(".image-list input")
 
     #automatic scrolling helpers
     init_automatic_scrolling: ->
@@ -168,4 +168,4 @@ $ ->
     last_banner: () ->
       @banners.length - 1
 
-  scroller = new BannerScroller($(".banners"))
+  scroller = new BannerScroller($(".carousel"))

@@ -143,7 +143,7 @@
       };
 
       BannerScroller.prototype.init_banner_data = function() {
-        return this.banners = this.make_banner_list(this.container.find(".banner-list input"));
+        return this.banners = this.make_banner_list(this.container.find(".image-list input"));
       };
 
       BannerScroller.prototype.init_automatic_scrolling = function() {
@@ -240,5 +240,5 @@
       return BannerScroller;
 
     })();
-    return scroller = new BannerScroller($(".banners"));
+    return scroller = new BannerScroller($(".carousel"));
   });

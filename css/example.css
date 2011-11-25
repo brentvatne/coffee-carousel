@@ -56,105 +56,105 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 /*         Variables             */
 /*         Funciones             */
-.icons-sprite, .banners .toolbar .controls .pause, .banners .toolbar .controls .play, .banners .toolbar .controls .prev, .banners .toolbar .controls .next {
+.icons-sprite, .carousel .toolbar .controls .pause, .carousel .toolbar .controls .play, .carousel .toolbar .controls .prev, .carousel .toolbar .controls .next {
   background: url('../images/icons-s4f45944365.png') no-repeat;
 }
 
 /* import icons */
 /* import icons */
-.banners {
+.carousel {
   font-family: Helvetica, Arial, sans-serif;
   position: relative;
   height: 556px;
   width: 990px;
 }
-.banners .scroll-container {
+.carousel .scroll-container {
   position: relative;
 }
-.banners .stage, .banners .backstage {
+.carousel .stage, .carousel .backstage {
   position: absolute;
   top: 0px;
   left: 0px;
 }
-.banners .stage {
+.carousel .stage {
   z-index: 1000;
 }
-.banners .backstage {
+.carousel .backstage {
   z-index: 990;
 }
-.banners .toolbar-base, .banners .toolbar-background, .banners .toolbar {
+.carousel .toolbar-base, .carousel .toolbar-background, .carousel .toolbar {
   width: 100%;
   height: 30px;
   position: absolute;
   bottom: 0px;
   left: 0px;
 }
-.banners .toolbar-background {
+.carousel .toolbar-background {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
   opacity: 0.7;
   z-index: 1009;
   background: #000;
 }
-.banners .toolbar {
+.carousel .toolbar {
   z-index: 1010;
   color: #eee;
 }
-.banners .toolbar .subtitle {
+.carousel .toolbar .subtitle {
   font-size: 14px;
   line-height: 30px;
   padding-left: 10px;
   vertical-align: middle;
 }
-.banners .toolbar .subtitle span {
+.carousel .toolbar .subtitle span {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   opacity: 0.8;
 }
-.banners .toolbar .controls {
+.carousel .toolbar .controls {
   position: absolute;
   right: 5px;
   top: 5px;
 }
-.banners .toolbar .controls .control, .banners .toolbar .controls .pause, .banners .toolbar .controls .play, .banners .toolbar .controls .prev, .banners .toolbar .controls .next {
+.carousel .toolbar .controls .control, .carousel .toolbar .controls .pause, .carousel .toolbar .controls .play, .carousel .toolbar .controls .prev, .carousel .toolbar .controls .next {
   display: inline-block;
   /* For normal, healthy browsers */
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
 }
-* html .banners .toolbar .controls .control, * html .banners .toolbar .controls .pause, * html .banners .toolbar .controls .play, * html .banners .toolbar .controls .prev, * html .banners .toolbar .controls .next {
+* html .carousel .toolbar .controls .control, * html .carousel .toolbar .controls .pause, * html .carousel .toolbar .controls .play, * html .carousel .toolbar .controls .prev, * html .carousel .toolbar .controls .next {
   /* for IE6 */
   display: inline;
 }
-* + html .banners .toolbar .controls .control, * + html .banners .toolbar .controls .pause, * + html .banners .toolbar .controls .play, * + html .banners .toolbar .controls .prev, * + html .banners .toolbar .controls .next {
+* + html .carousel .toolbar .controls .control, * + html .carousel .toolbar .controls .pause, * + html .carousel .toolbar .controls .play, * + html .carousel .toolbar .controls .prev, * + html .carousel .toolbar .controls .next {
   /* for IE7 */
   display: inline;
 }
-.banners .toolbar .controls .control:hover, .banners .toolbar .controls .pause:hover, .banners .toolbar .controls .play:hover, .banners .toolbar .controls .prev:hover, .banners .toolbar .controls .next:hover {
+.carousel .toolbar .controls .control:hover, .carousel .toolbar .controls .pause:hover, .carousel .toolbar .controls .play:hover, .carousel .toolbar .controls .prev:hover, .carousel .toolbar .controls .next:hover {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   opacity: 0.8;
   cursor: pointer;
   cursor: hand;
 }
-.banners .toolbar .controls .pause {
+.carousel .toolbar .controls .pause {
   background-position: 0 -21px;
   height: 21px;
   width: 27px;
 }
-.banners .toolbar .controls .play {
+.carousel .toolbar .controls .play {
   background-position: 0 -42px;
   height: 21px;
   width: 27px;
 }
-.banners .toolbar .controls .prev {
+.carousel .toolbar .controls .prev {
   background-position: 0 -63px;
   height: 21px;
   width: 27px;
 }
-.banners .toolbar .controls .next {
+.carousel .toolbar .controls .next {
   background-position: 0 0;
   height: 21px;
   width: 27px;
 }
-.banners .toolbar .controls .hidden {
+.carousel .toolbar .controls .hidden {
   display: none !important;
 }
