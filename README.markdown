@@ -1,10 +1,10 @@
-**Simple image carousel written in CoffeeScript
+## Simple image carousel written in CoffeeScript
 Just a very simple image carousel that I needed. I couldn't find one
 that worked exactly how I wanted so I made this. In particular, it lets
 me add subtitles easily and preloads images, although it doesn't do so
 particularly intelligently - just sequentially.
 
-*** Use it
+### Use it
 Dependent on jQuery 1.4 or higher.
 
 Add the following markup anywhere in your HTML file:
