@@ -22,7 +22,8 @@ Add the following markup anywhere in your HTML file:
 
 
   <div class="image-list">
-    <!-- add any images you want here -->
+    <!-- add any images you want here using inputs -->
+    <!-- these inputs also support a link tag and an alt tag -->
     <input type="hidden" imgurl="images/1.jpg" subtitle="Estamos de aniversario">
     <input type="hidden" imgurl="images/2.jpg" subtitle="Something about airborne">
     <input type="hidden" imgurl="images/3.jpg" subtitle="This is the third subtitle">
@@ -33,10 +34,10 @@ Add the following markup anywhere in your HTML file:
 
     </div>
     <div class="controls">
-      <span class="pause">pause</span>
-      <span class="play">play</span>
-      <span class="prev">prev</span>
-      <span class="next">next</span>
+      <span class="pause"></span>
+      <span class="play"></span>
+      <span class="prev"></span>
+      <span class="next"></span>
     </div>
   </div>
 </div>
