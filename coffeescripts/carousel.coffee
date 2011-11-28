@@ -1,5 +1,5 @@
 $ ->
-  class AutomaticScroller
+  class Timer
     constructor: (@scroller, @wait) ->
       @create()
 
@@ -19,7 +19,7 @@ $ ->
 
     running: -> @timer
 
-  class BannerScroller
+  class Carousel
     # Accepts a container that is a jQuery object containing all required components
     constructor: (@container) ->
       @init_dom_objects()
@@ -111,7 +111,7 @@ $ ->
     #automatic scrolling helpers
     init_automatic_scrolling: ->
       @toggle_play_button()
-      @timer = new AutomaticScroller this, 6000
+      @timer = new Timer this, 6000
 
     stop_automatic_scrolling: ->
       if @timer.running()
@@ -154,4 +154,4 @@ $ ->
 
     last_banner: () -> @banners.length - 1
 
-  scroller = new BannerScroller($(".carousel"))
+  scroller = new Carousel($(".carousel"))

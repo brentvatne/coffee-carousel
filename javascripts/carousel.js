@@ -1,19 +1,19 @@
 
   $(function() {
-    var AutomaticScroller, BannerScroller, scroller;
-    AutomaticScroller = (function() {
+    var Carousel, Timer, scroller;
+    Timer = (function() {
 
-      function AutomaticScroller(scroller, wait) {
+      function Timer(scroller, wait) {
         this.scroller = scroller;
         this.wait = wait;
         this.create();
       }
 
-      AutomaticScroller.prototype.delay = function(callback) {
+      Timer.prototype.delay = function(callback) {
         return setTimeout(callback, this.wait);
       };
 
-      AutomaticScroller.prototype.create = function() {
+      Timer.prototype.create = function() {
         var _this = this;
         this.timer = this.delay(function() {
           _this.scroller.next();
@@ -22,22 +22,22 @@
         return this;
       };
 
-      AutomaticScroller.prototype.destroy = function() {
+      Timer.prototype.destroy = function() {
         clearTimeout(this.timer);
         this.timer = null;
         return this;
       };
 
-      AutomaticScroller.prototype.running = function() {
+      Timer.prototype.running = function() {
         return this.timer;
       };
 
-      return AutomaticScroller;
+      return Timer;
 
     })();
-    BannerScroller = (function() {
+    Carousel = (function() {
 
-      function BannerScroller(container) {
+      function Carousel(container) {
         this.container = container;
         this.init_dom_objects();
         this.init_callbacks();
@@ -47,15 +47,15 @@
         this.init_automatic_scrolling();
       }
 
-      BannerScroller.prototype.next = function() {
+      Carousel.prototype.next = function() {
         return this.show_banner(this.next_banner());
       };
 
-      BannerScroller.prototype.prev = function() {
+      Carousel.prototype.prev = function() {
         return this.show_banner(this.prev_banner());
       };
 
-      BannerScroller.prototype.preload_next_image = function() {
+      Carousel.prototype.preload_next_image = function() {
         var next_image;
         if (!(this.preloaded_images != null)) {
           this.preloaded_images = [this.active_banner()];
@@ -68,17 +68,17 @@
         }
       };
 
-      BannerScroller.prototype.active_banner = function() {
+      Carousel.prototype.active_banner = function() {
         return this.banners[this.active_banner_id];
       };
 
-      BannerScroller.prototype.show_banner = function(id) {
+      Carousel.prototype.show_banner = function(id) {
         this.active_banner_id = id;
         this.hide_old_banner();
         return this.show_new_banner();
       };
 
-      BannerScroller.prototype.hide_old_banner = function() {
+      Carousel.prototype.hide_old_banner = function() {
         var _this = this;
         this.backstage.empty();
         this.stage.find("a").appendTo(this.backstage).fadeOut(function() {
@@ -88,7 +88,7 @@
         return this.subtitle.empty();
       };
 
-      BannerScroller.prototype.show_new_banner = function() {
+      Carousel.prototype.show_new_banner = function() {
         var alt, image, link, subtitle;
         image = this.active_banner().image;
         link = this.active_banner().link;
@@ -98,7 +98,7 @@
         return this.html_subtitle(subtitle).appendTo(this.subtitle);
       };
 
-      BannerScroller.prototype.init_dom_objects = function() {
+      Carousel.prototype.init_dom_objects = function() {
         this.next_button = this.wrap_in_null_link(this.container.find(".controls .next"));
         this.prev_button = this.wrap_in_null_link(this.container.find(".controls .prev"));
         this.play_button = this.wrap_in_null_link(this.container.find(".controls .play"));
@@ -108,13 +108,13 @@
         return this.subtitle = this.container.find(".subtitle");
       };
 
-      BannerScroller.prototype.wrap_in_null_link = function($el) {
+      Carousel.prototype.wrap_in_null_link = function($el) {
         return $el.wrap('<a />').click(function(e) {
           return e.preventDefault();
         });
       };
 
-      BannerScroller.prototype.init_callbacks = function() {
+      Carousel.prototype.init_callbacks = function() {
         var _this = this;
         this.next_button.click(function() {
           _this.stop_automatic_scrolling();
@@ -132,7 +132,7 @@
         });
       };
 
-      BannerScroller.prototype.toggle_play_button = function() {
+      Carousel.prototype.toggle_play_button = function() {
         if (this.play_button.hasClass("hidden")) {
           this.play_button.removeClass("hidden");
           return this.pause_button.addClass("hidden");
@@ -142,28 +142,28 @@
         }
       };
 
-      BannerScroller.prototype.init_banner_data = function() {
+      Carousel.prototype.init_banner_data = function() {
         return this.banners = this.make_banner_list(this.container.find(".image-list input"));
       };
 
-      BannerScroller.prototype.init_automatic_scrolling = function() {
+      Carousel.prototype.init_automatic_scrolling = function() {
         this.toggle_play_button();
-        return this.timer = new AutomaticScroller(this, 6000);
+        return this.timer = new Timer(this, 6000);
       };
 
-      BannerScroller.prototype.stop_automatic_scrolling = function() {
+      Carousel.prototype.stop_automatic_scrolling = function() {
         if (this.timer.running()) {
           this.toggle_play_button();
           return this.timer.destroy();
         }
       };
 
-      BannerScroller.prototype.restart_automatic_scrolling = function() {
+      Carousel.prototype.restart_automatic_scrolling = function() {
         this.toggle_play_button();
         return this.timer.destroy().create();
       };
 
-      BannerScroller.prototype.make_banner_list = function(elements) {
+      Carousel.prototype.make_banner_list = function(elements) {
         var data, el, list, _i, _len;
         elements = (function() {
           var _i, _len, _results;
@@ -188,7 +188,7 @@
         return list;
       };
 
-      BannerScroller.prototype.html_banner = function(image, alt, link) {
+      Carousel.prototype.html_banner = function(image, alt, link) {
         var banner;
         if (alt == null) alt = "";
         if (link == null) link = "";
@@ -201,11 +201,11 @@
         }));
       };
 
-      BannerScroller.prototype.html_subtitle = function(subtitle) {
+      Carousel.prototype.html_subtitle = function(subtitle) {
         return $("<span>" + subtitle + "</span>");
       };
 
-      BannerScroller.prototype.prev_banner = function() {
+      Carousel.prototype.prev_banner = function() {
         if (this.first_banner_is_active()) {
           return this.last_banner();
         } else {
@@ -213,7 +213,7 @@
         }
       };
 
-      BannerScroller.prototype.next_banner = function() {
+      Carousel.prototype.next_banner = function() {
         if (this.last_banner_is_active()) {
           return this.first_banner();
         } else {
@@ -221,24 +221,24 @@
         }
       };
 
-      BannerScroller.prototype.last_banner_is_active = function() {
+      Carousel.prototype.last_banner_is_active = function() {
         return this.active_banner_id === this.last_banner();
       };
 
-      BannerScroller.prototype.first_banner_is_active = function() {
+      Carousel.prototype.first_banner_is_active = function() {
         return this.active_banner_id === 0;
       };
 
-      BannerScroller.prototype.first_banner = function() {
+      Carousel.prototype.first_banner = function() {
         return 0;
       };
 
-      BannerScroller.prototype.last_banner = function() {
+      Carousel.prototype.last_banner = function() {
         return this.banners.length - 1;
       };
 
-      return BannerScroller;
+      return Carousel;
 
     })();
-    return scroller = new BannerScroller($(".carousel"));
+    return scroller = new Carousel($(".carousel"));
   });
