@@ -3,8 +3,7 @@ $ ->
     constructor: (@scroller, @wait) ->
       @create()
 
-    delay: (callback) ->
-      setTimeout callback, @wait
+    delay: (callback) -> setTimeout callback, @wait
 
     create: ()->
       @timer = @delay(=>
@@ -18,8 +17,7 @@ $ ->
       @timer = null
       this
 
-    running: ->
-      @timer
+    running: -> @timer
 
   class BannerScroller
     # Accepts a container that is a jQuery object containing all required components
@@ -31,11 +29,9 @@ $ ->
       @preload_next_image()
       @init_automatic_scrolling()
 
-    next: ->
-      @show_banner @next_banner()
+    next: -> @show_banner @next_banner()
 
-    prev: ->
-      @show_banner @prev_banner()
+    prev: -> @show_banner @prev_banner()
 
     preload_next_image: () ->
       @preloaded_images = [@active_banner()] if not @preloaded_images?
@@ -46,8 +42,7 @@ $ ->
         @html_banner(next_image.image).appendTo(@backstage)
         @preloaded_images.push next_image
 
-    active_banner: () ->
-      @banners[@active_banner_id]
+    active_banner: () -> @banners[@active_banner_id]
 
     show_banner: (id) ->
       @active_banner_id = id
@@ -98,11 +93,9 @@ $ ->
         @stop_automatic_scrolling()
         @prev()
 
-      @pause_button.click =>
-        @stop_automatic_scrolling()
+      @pause_button.click => @stop_automatic_scrolling()
 
-      @play_button.click =>
-        @restart_automatic_scrolling()
+      @play_button.click => @restart_automatic_scrolling()
 
     toggle_play_button: ->
       if @play_button.hasClass "hidden"
@@ -147,25 +140,18 @@ $ ->
       banner = $('<a/>', href: link)
       banner.html($('<img/>', src: image, alt: alt))
 
-    html_subtitle: (subtitle) ->
-      $("<span>#{subtitle}</span>")
+    html_subtitle: (subtitle) -> $("<span>#{subtitle}</span>")
 
-    prev_banner: ->
-      if @first_banner_is_active() then @last_banner() else @active_banner_id - 1
+    prev_banner: -> if @first_banner_is_active() then @last_banner() else @active_banner_id - 1
 
-    next_banner: ->
-      if @last_banner_is_active() then @first_banner() else @active_banner_id + 1
+    next_banner: -> if @last_banner_is_active() then @first_banner() else @active_banner_id + 1
 
-    last_banner_is_active: ->
-      @active_banner_id == @last_banner()
+    last_banner_is_active: -> @active_banner_id == @last_banner()
 
-    first_banner_is_active: ->
-      @active_banner_id == 0
+    first_banner_is_active: -> @active_banner_id == 0
 
-    first_banner: () ->
-      0
+    first_banner: () -> 0
 
-    last_banner: () ->
-      @banners.length - 1
+    last_banner: () -> @banners.length - 1
 
   scroller = new BannerScroller($(".carousel"))

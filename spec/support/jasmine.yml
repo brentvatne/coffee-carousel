@@ -1,0 +1,10 @@
+src_dir: javascripts
+
+src_files:
+  - carousel.js
+  - jquery-1.7.1.js
+
+spec_dir: spec/javascripts
+
+spec_files:
+  - **/*_spec.js
