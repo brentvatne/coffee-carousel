@@ -16,7 +16,7 @@
       Timer.prototype.create = function() {
         var _this = this;
         this.timer = this.delay(function() {
-          _this.scroller.next();
+          _this.scroller.show_next();
           return _this.create();
         });
         return this;
@@ -39,97 +39,62 @@
 
       function Carousel(container) {
         this.container = container;
-        this.init_dom_objects();
-        this.init_callbacks();
-        this.init_banner_data();
-        this.show_banner(0);
+        this.init_dom_references();
+        this.init_controls();
+        this.init_image_data();
+        this.start(0);
         this.preload_next_image();
-        this.init_automatic_scrolling();
+        this.start_automatic_scrolling();
       }
 
-      Carousel.prototype.next = function() {
-        return this.show_banner(this.next_banner());
+      Carousel.prototype.show_image = function(id) {
+        this.active_image_id = id;
+        return this.fade_out_active_image() && this.fade_in_new_image();
       };
 
-      Carousel.prototype.prev = function() {
-        return this.show_banner(this.prev_banner());
-      };
-
-      Carousel.prototype.preload_next_image = function() {
-        var next_image;
-        if (!(this.preloaded_images != null)) {
-          this.preloaded_images = [this.active_banner()];
-        }
-        if (this.preloaded_images.length < this.banners.length) {
-          next_image = this.banners[this.next_banner()];
-          this.backstage.empty();
-          this.html_banner(next_image.image).appendTo(this.backstage);
-          return this.preloaded_images.push(next_image);
-        }
-      };
-
-      Carousel.prototype.active_banner = function() {
-        return this.banners[this.active_banner_id];
-      };
-
-      Carousel.prototype.show_banner = function(id) {
-        this.active_banner_id = id;
-        this.hide_old_banner();
-        return this.show_new_banner();
-      };
-
-      Carousel.prototype.hide_old_banner = function() {
+      Carousel.prototype.fade_out_active_image = function() {
         var _this = this;
         this.backstage.empty();
         this.stage.find("a").appendTo(this.backstage).fadeOut(function() {
           return _this.preload_next_image();
         });
-        this.stage.empty();
-        return this.subtitle.empty();
+        return this.stage.empty() && this.subtitle.empty();
       };
 
-      Carousel.prototype.show_new_banner = function() {
-        var alt, image, link, subtitle;
-        image = this.active_banner().image;
-        link = this.active_banner().link;
-        alt = this.active_banner().alt;
-        subtitle = this.active_banner().subtitle;
-        this.html_banner(image, alt, link).appendTo(this.stage).hide().fadeIn();
-        return this.html_subtitle(subtitle).appendTo(this.subtitle);
+      Carousel.prototype.fade_in_new_image = function() {
+        var alt, image_url, link, subtitle;
+        image_url = this.active_image().image_url;
+        link = this.active_image().link;
+        alt = this.active_image().alt;
+        subtitle = this.active_image().subtitle;
+        this.image_tag(image_url, alt, link).appendTo(this.stage).hide().fadeIn();
+        return this.subtitle_tag(subtitle).appendTo(this.subtitle);
       };
 
-      Carousel.prototype.init_dom_objects = function() {
-        this.next_button = this.wrap_in_null_link(this.container.find(".controls .next"));
-        this.prev_button = this.wrap_in_null_link(this.container.find(".controls .prev"));
-        this.play_button = this.wrap_in_null_link(this.container.find(".controls .play"));
-        this.pause_button = this.wrap_in_null_link(this.container.find(".controls .pause"));
-        this.stage = this.container.find(".stage");
-        this.backstage = this.container.find(".backstage");
-        return this.subtitle = this.container.find(".subtitle");
-      };
-
-      Carousel.prototype.wrap_in_null_link = function($el) {
-        return $el.wrap('<a />').click(function(e) {
-          return e.preventDefault();
-        });
-      };
-
-      Carousel.prototype.init_callbacks = function() {
+      Carousel.prototype.init_controls = function() {
         var _this = this;
         this.next_button.click(function() {
           _this.stop_automatic_scrolling();
-          return _this.next();
+          return _this.show_next();
         });
         this.prev_button.click(function() {
           _this.stop_automatic_scrolling();
-          return _this.prev();
+          return _this.show_prev();
         });
         this.pause_button.click(function() {
           return _this.stop_automatic_scrolling();
         });
         return this.play_button.click(function() {
-          return _this.restart_automatic_scrolling();
+          return _this.start_automatic_scrolling();
         });
+      };
+
+      Carousel.prototype.show_next = function() {
+        return this.show_image(this.next_image());
+      };
+
+      Carousel.prototype.show_prev = function() {
+        return this.show_image(this.prev_image());
       };
 
       Carousel.prototype.toggle_play_button = function() {
@@ -142,13 +107,14 @@
         }
       };
 
-      Carousel.prototype.init_banner_data = function() {
-        return this.banners = this.make_banner_list(this.container.find(".image-list input"));
-      };
-
-      Carousel.prototype.init_automatic_scrolling = function() {
-        this.toggle_play_button();
-        return this.timer = new Timer(this, 6000);
+      Carousel.prototype.start_automatic_scrolling = function() {
+        if (this.timer) {
+          this.toggle_play_button();
+          return this.timer.destroy().create();
+        } else {
+          this.toggle_play_button();
+          return this.timer = new Timer(this, 6000);
+        }
       };
 
       Carousel.prototype.stop_automatic_scrolling = function() {
@@ -158,83 +124,112 @@
         }
       };
 
-      Carousel.prototype.restart_automatic_scrolling = function() {
-        this.toggle_play_button();
-        return this.timer.destroy().create();
-      };
-
-      Carousel.prototype.make_banner_list = function(elements) {
-        var data, el, list, _i, _len;
-        elements = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = elements.length; _i < _len; _i++) {
-            el = elements[_i];
-            _results.push($(el));
-          }
-          return _results;
-        })();
-        list = [];
-        for (_i = 0, _len = elements.length; _i < _len; _i++) {
-          el = elements[_i];
-          data = {
-            image: el.attr("imgurl"),
-            subtitle: el.attr("subtitle"),
-            link: el.attr("link"),
-            alt: el.attr("alt")
-          };
-          list.push(data);
-        }
-        return list;
-      };
-
-      Carousel.prototype.html_banner = function(image, alt, link) {
-        var banner;
+      Carousel.prototype.image_tag = function(image_url, alt, link) {
+        var image;
         if (alt == null) alt = "";
         if (link == null) link = "";
-        banner = $('<a/>', {
+        image = $('<a/>', {
           href: link
         });
-        return banner.html($('<img/>', {
-          src: image,
+        return image.html($('<img/>', {
+          src: image_url,
           alt: alt
         }));
       };
 
-      Carousel.prototype.html_subtitle = function(subtitle) {
+      Carousel.prototype.subtitle_tag = function(subtitle) {
         return $("<span>" + subtitle + "</span>");
       };
 
-      Carousel.prototype.prev_banner = function() {
-        if (this.first_banner_is_active()) {
-          return this.last_banner();
-        } else {
-          return this.active_banner_id - 1;
-        }
-      };
-
-      Carousel.prototype.next_banner = function() {
-        if (this.last_banner_is_active()) {
-          return this.first_banner();
-        } else {
-          return this.active_banner_id + 1;
-        }
-      };
-
-      Carousel.prototype.last_banner_is_active = function() {
-        return this.active_banner_id === this.last_banner();
-      };
-
-      Carousel.prototype.first_banner_is_active = function() {
-        return this.active_banner_id === 0;
-      };
-
-      Carousel.prototype.first_banner = function() {
+      Carousel.prototype.first_image = function() {
         return 0;
       };
 
-      Carousel.prototype.last_banner = function() {
-        return this.banners.length - 1;
+      Carousel.prototype.last_image = function() {
+        return this.images.length - 1;
+      };
+
+      Carousel.prototype.prev_image = function() {
+        if (this.first_image_is_active()) {
+          return this.last_image();
+        } else {
+          return this.active_image_id - 1;
+        }
+      };
+
+      Carousel.prototype.next_image = function() {
+        if (this.last_image_is_active()) {
+          return this.first_image();
+        } else {
+          return this.active_image_id + 1;
+        }
+      };
+
+      Carousel.prototype.active_image = function() {
+        return this.images[this.active_image_id];
+      };
+
+      Carousel.prototype.last_image_is_active = function() {
+        return this.active_image_id === this.last_image();
+      };
+
+      Carousel.prototype.first_image_is_active = function() {
+        return this.active_image_id === 0;
+      };
+
+      Carousel.prototype.preload_next_image = function() {
+        var next_image;
+        if (!(this.preloaded_images != null)) {
+          this.preloaded_images = [this.active_image()];
+        }
+        if (this.preloaded_images.length < this.images.length) {
+          next_image = this.images[this.next_image()];
+          this.backstage.empty();
+          this.image_tag(next_image.image).appendTo(this.backstage);
+          return this.preloaded_images.push(next_image);
+        }
+      };
+
+      Carousel.prototype.start = function(first_image) {
+        if (first_image == null) first_image = 0;
+        return this.show_image(first_image);
+      };
+
+      Carousel.prototype.init_dom_references = function() {
+        this.next_button = this.container.find(".controls .next");
+        this.prev_button = this.container.find(".controls .prev");
+        this.play_button = this.container.find(".controls .play");
+        this.pause_button = this.container.find(".controls .pause");
+        this.stage = this.container.find(".stage");
+        this.backstage = this.container.find(".backstage");
+        return this.subtitle = this.container.find(".subtitle");
+      };
+
+      Carousel.prototype.init_image_data = function() {
+        var data, el, elements, _i, _len, _results;
+        elements = (function() {
+          var _i, _len, _ref, _results;
+          _ref = this.container.find(".image-list input");
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            el = _ref[_i];
+            _results.push($(el));
+          }
+          return _results;
+        }).call(this);
+        this.images = [];
+        _results = [];
+        for (_i = 0, _len = elements.length; _i < _len; _i++) {
+          el = elements[_i];
+          data = {
+            image_url: el.attr("imgurl"),
+            subtitle: el.attr("subtitle"),
+            link: el.attr("link"),
+            alt: el.attr("alt")
+          };
+          _results.push(this.images.push(data));
+        }
+        return _results;
       };
 
       return Carousel;

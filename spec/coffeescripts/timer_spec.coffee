@@ -1,6 +1,6 @@
 describe "Timer", ->
   beforeEach ->
 
-  describe "put describe here", ->
+  describe "", ->
     it "should pass this test", ->
       expect(false).toBeFalsy()

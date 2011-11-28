@@ -7,7 +7,7 @@ $ ->
 
     create: ()->
       @timer = @delay(=>
-        @scroller.next()
+        @scroller.show_next()
         @create()
       )
       this
@@ -20,138 +20,154 @@ $ ->
     running: -> @timer
 
   class Carousel
-    # Accepts a container that is a jQuery object containing all required components
+    # Public: Initializes the Carousel instance
+    #
+    # @container - A jQuery element
     constructor: (@container) ->
-      @init_dom_objects()
-      @init_callbacks()
-      @init_banner_data()
-      @show_banner 0
+      @init_dom_references()
+      @init_controls()
+      @init_image_data()
+      @start(0)
       @preload_next_image()
-      @init_automatic_scrolling()
+      @start_automatic_scrolling()
 
-    next: -> @show_banner @next_banner()
+    # What is the difference between show_image and show_new_image??
+    show_image: (id) ->
+      @active_image_id = id
+      @fade_out_active_image() and @fade_in_new_image()
 
-    prev: -> @show_banner @prev_banner()
-
-    preload_next_image: () ->
-      @preloaded_images = [@active_banner()] if not @preloaded_images?
-
-      if @preloaded_images.length < @banners.length
-        next_image = @banners[@next_banner()]
-        @backstage.empty()
-        @html_banner(next_image.image).appendTo(@backstage)
-        @preloaded_images.push next_image
-
-    active_banner: () -> @banners[@active_banner_id]
-
-    show_banner: (id) ->
-      @active_banner_id = id
-      @hide_old_banner()
-      @show_new_banner()
-
-    # moves staged image to backstage and begins to fade it out
-    # also removes the subtitle
-    hide_old_banner: () ->
+    fade_out_active_image: () ->
       @backstage.empty()
       @stage.find("a").appendTo(@backstage).fadeOut(=> @preload_next_image())
-      @stage.empty()
-      @subtitle.empty()
+      @stage.empty() and @subtitle.empty()
 
-    # adds new image to stage and begins to fade it in
-    show_new_banner: () ->
-      image    = @active_banner().image
-      link     = @active_banner().link
-      alt      = @active_banner().alt
-      subtitle = @active_banner().subtitle
+    fade_in_new_image: () ->
+      image_url = @active_image().image_url
+      link      = @active_image().link
+      alt       = @active_image().alt
+      subtitle  = @active_image().subtitle
 
-      @html_banner(image, alt, link).appendTo(@stage).hide().fadeIn()
-      @html_subtitle(subtitle).appendTo(@subtitle)
+      @image_tag(image_url, alt, link).appendTo(@stage).hide().fadeIn()
+      @subtitle_tag(subtitle).appendTo(@subtitle)
 
-    #initialization methods
-    init_dom_objects: ->
-      @next_button   = @wrap_in_null_link @container.find(".controls .next")
-      @prev_button   = @wrap_in_null_link @container.find(".controls .prev")
-      @play_button   = @wrap_in_null_link @container.find(".controls .play")
-      @pause_button  = @wrap_in_null_link @container.find(".controls .pause")
-      @stage         = @container.find(".stage")
-      @backstage     = @container.find(".backstage")
-      @subtitle      = @container.find(".subtitle")
+    # *************************************************************************
+    # Image Scrolling Controls: Play, Pause, Next, Previous
+    # *************************************************************************
 
-    # Internal: Wraps the given jQuery element in a link that does nothing
-    # in order to prevent the browser from trying to select the elements when
-    # clicked multiple times
-    wrap_in_null_link: ($el)->
-      $el.wrap('<a />').click (e) ->
-        e.preventDefault()
-
-    init_callbacks: ->
+    init_controls: ->
       @next_button.click =>
         @stop_automatic_scrolling()
-        @next()
+        @show_next()
 
       @prev_button.click =>
         @stop_automatic_scrolling()
-        @prev()
+        @show_prev()
 
       @pause_button.click => @stop_automatic_scrolling()
 
-      @play_button.click => @restart_automatic_scrolling()
+      @play_button.click => @start_automatic_scrolling()
+
+    show_next: -> @show_image @next_image()
+
+    show_prev: -> @show_image @prev_image()
 
     toggle_play_button: ->
-      if @play_button.hasClass "hidden"
-        @play_button.removeClass "hidden"
-        @pause_button.addClass "hidden"
+      if @play_button.hasClass    "hidden"
+        @play_button.removeClass  "hidden"
+        @pause_button.addClass    "hidden"
       else
-        @play_button.addClass "hidden"
+        @play_button.addClass     "hidden"
         @pause_button.removeClass "hidden"
 
-    init_banner_data: ->
-      @banners = @make_banner_list @container.find(".image-list input")
 
-    #automatic scrolling helpers
-    init_automatic_scrolling: ->
-      @toggle_play_button()
-      @timer = new Timer this, 6000
+    # *************************************************************************
+    # Scrolling Behaviour
+    # *************************************************************************
+
+    start_automatic_scrolling: ->
+      if @timer
+        @toggle_play_button()
+        @timer.destroy().create()
+      else
+        @toggle_play_button()
+        @timer = new Timer this, 6000
 
     stop_automatic_scrolling: ->
       if @timer.running()
         @toggle_play_button()
         @timer.destroy()
 
-    restart_automatic_scrolling: ->
-      @toggle_play_button()
-      @timer.destroy().create()
 
-    #lower-level utility methods
-    make_banner_list: (elements) ->
-      elements = ($ el for el in elements)
-      list = []
+    # *************************************************************************
+    # HTML Tag Generator Methods
+    # *************************************************************************
+
+    image_tag: (image_url, alt = "", link = "") ->
+      # if no link, don't put a
+      image = $('<a/>', href: link)
+      image.html($('<img/>', src: image_url, alt: alt))
+
+    subtitle_tag: (subtitle) -> $("<span>#{subtitle}</span>")
+
+
+    # *************************************************************************
+    # Utility methods for querying state carousel
+    # *************************************************************************
+
+    first_image: () -> 0
+
+    last_image: () -> @images.length - 1
+
+    prev_image: -> if @first_image_is_active() then @last_image() else @active_image_id - 1
+
+    next_image: -> if @last_image_is_active() then @first_image() else @active_image_id + 1
+
+    active_image: () -> @images[@active_image_id]
+
+    last_image_is_active: -> @active_image_id == @last_image()
+
+    first_image_is_active: -> @active_image_id == 0
+
+
+    # *************************************************************************
+    # Preloading Behaviour (this will be extracted to another class)
+    # *************************************************************************
+
+    preload_next_image: () ->
+      @preloaded_images = [@active_image()] if not @preloaded_images?
+
+      if @preloaded_images.length < @images.length
+        next_image = @images[@next_image()]
+        @backstage.empty()
+        @image_tag(next_image.image).appendTo(@backstage)
+        @preloaded_images.push next_image
+
+
+    # *************************************************************************
+    # Initialization methods
+    # *************************************************************************
+
+    start: (first_image = 0) ->
+      @show_image first_image
+
+    init_dom_references: ->
+      @next_button   = @container.find(".controls .next")
+      @prev_button   = @container.find(".controls .prev")
+      @play_button   = @container.find(".controls .play")
+      @pause_button  = @container.find(".controls .pause")
+      @stage         = @container.find(".stage")
+      @backstage     = @container.find(".backstage")
+      @subtitle      = @container.find(".subtitle")
+
+    init_image_data: ->
+      elements = ($ el for el in @container.find(".image-list input"))
+      @images = []
       for el in elements
         data =
-          image:    el.attr "imgurl"
-          subtitle: el.attr "subtitle"
-          link:     el.attr "link"
-          alt:      el.attr "alt"
-        list.push(data)
-      list
-
-    #creates and returns a new anchor element containing the banner image
-    html_banner: (image, alt = "", link = "") ->
-      banner = $('<a/>', href: link)
-      banner.html($('<img/>', src: image, alt: alt))
-
-    html_subtitle: (subtitle) -> $("<span>#{subtitle}</span>")
-
-    prev_banner: -> if @first_banner_is_active() then @last_banner() else @active_banner_id - 1
-
-    next_banner: -> if @last_banner_is_active() then @first_banner() else @active_banner_id + 1
-
-    last_banner_is_active: -> @active_banner_id == @last_banner()
-
-    first_banner_is_active: -> @active_banner_id == 0
-
-    first_banner: () -> 0
-
-    last_banner: () -> @banners.length - 1
+          image_url: el.attr "imgurl"
+          subtitle:  el.attr "subtitle"
+          link:      el.attr "link"
+          alt:       el.attr "alt"
+        @images.push(data)
 
   scroller = new Carousel($(".carousel"))
