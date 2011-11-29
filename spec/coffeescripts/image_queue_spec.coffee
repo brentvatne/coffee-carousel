@@ -1,6 +1,5 @@
 describe "ImageQueue", ->
   beforeEach ->
-    console.log window
     @images = new window.ImageQueue
 
   describe "initialize", ->

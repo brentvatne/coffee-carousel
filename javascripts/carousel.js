@@ -179,6 +179,42 @@
       return $("<span>" + subtitle + "</span>");
     };
 
+    Carousel.prototype.first_image = function() {
+      return 0;
+    };
+
+    Carousel.prototype.last_image = function() {
+      return this.images.length - 1;
+    };
+
+    Carousel.prototype.prev_image = function() {
+      if (this.first_image_is_active()) {
+        return this.last_image();
+      } else {
+        return this.active_image_id - 1;
+      }
+    };
+
+    Carousel.prototype.next_image = function() {
+      if (this.last_image_is_active()) {
+        return this.first_image();
+      } else {
+        return this.active_image_id + 1;
+      }
+    };
+
+    Carousel.prototype.active_image = function() {
+      return this.images[this.active_image_id];
+    };
+
+    Carousel.prototype.last_image_is_active = function() {
+      return this.active_image_id === this.last_image();
+    };
+
+    Carousel.prototype.first_image_is_active = function() {
+      return this.active_image_id === 0;
+    };
+
     Carousel.prototype.preload_next_image = function() {
       var next_image;
       if (!(this.preloaded_images != null)) {

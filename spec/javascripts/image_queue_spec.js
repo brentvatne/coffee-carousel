@@ -1,7 +1,6 @@
 
   describe("ImageQueue", function() {
     beforeEach(function() {
-      console.log(window);
       return this.images = new window.ImageQueue;
     });
     describe("initialize", function() {

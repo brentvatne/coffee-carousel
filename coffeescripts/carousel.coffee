@@ -132,6 +132,24 @@ class window.Carousel
   subtitle_tag: (subtitle) -> $("<span>#{subtitle}</span>")
 
 
+  # *************************************************************************
+  # Utility methods for querying state carousel
+  # *************************************************************************
+
+  first_image: () -> 0
+
+  last_image: () -> @images.length - 1
+
+  prev_image: -> if @first_image_is_active() then @last_image() else @active_image_id - 1
+
+  next_image: -> if @last_image_is_active() then @first_image() else @active_image_id + 1
+
+  active_image: () -> @images[@active_image_id]
+
+  last_image_is_active: -> @active_image_id == @last_image()
+
+  first_image_is_active: -> @active_image_id == 0
+
 
   # *************************************************************************
   # Preloading Behaviour (this will be extracted to another class)
